@@ -77,6 +77,7 @@ int main(int argc, char* argv[])
         fflua.reg(lua_reg);
         
         //! 载入lua文件
+        fflua.add_package_path("./");
         fflua.load_file("test.lua");
         
         //! 获取全局变量
