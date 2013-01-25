@@ -26,33 +26,33 @@ FFLUA 是嵌入LUA，注册C++相关的对象到lua的封装库, FFLUA 拥有如
         float   arg2 = 2;  
         double  arg3 = 3;  
         string  arg4 = "4";  
-        fflua.call<bool>("test_func", arg1, arg2, arg3,  arg4);  
+        fflua.call\<bool\>("test_func", arg1, arg2, arg3,  arg4);  
 
 5.  lua table 和 C++ STL 转换更容易  
     //! 调用lua函数，stl类型作为参数， 自动转换为lua talbe  
-    vector<int> vec;        vec.push_back(100);  
-    list<float> lt;         lt.push_back(99.99);  
-    set<string> st;         st.insert("OhNIce");  
-    map<string, int> mp;    mp["key"] = 200;  
-    fflua.call<string>("test_stl", vec, lt, st,  mp);  
+    vector\<int\> vec;        vec.push_back(100);  
+    list\<float\> lt;         lt.push_back(99.99);  
+    set\<string\> st;         st.insert("OhNIce");  
+    map\<string, int\> mp;    mp["key"] = 200;  
+    fflua.call\<string\>("test_stl", vec, lt, st,  mp);  
 
 6.  lua返回值转换 C++ STL 更简单  
     //! 调用lua 函数返回 talbe，自动转换为stl结构  
-    vec = fflua.call<vector<int> >("test_return_stl_vector");  
-    lt  = fflua.call<list<float> >("test_return_stl_list");  
-    st  = fflua.call<set<string> >("test_return_stl_set");  
-    mp  = fflua.call<map<string, int> >("test_return_stl_map");  
+    vec = fflua.call\<vector\<int\> \>("test_return_stl_vector");  
+    lt  = fflua.call\<list\<float\> \>("test_return_stl_list");  
+    st  = fflua.call\<set\<string\> \>("test_return_stl_set");  
+    mp  = fflua.call\<map\<string, int\> \>("test_return_stl_map");  
 
 7.  C++ 最为参数更容易:
     //! 调用lua函数，c++ 对象作为参数, foo_t 必须被注册过
     foo_t* foo_ptr = new foo_t(456);
-    fflua.call<bool>("test_object", foo_ptr);
+    fflua.call\<bool\>("test_object", foo_ptr);
 
 8.  C++ 对象作为返回值更容易  
     //! 调用lua函数，c++ 对象作为返回值, foo_t 必须被注册过   
-    assert(foo_ptr == fflua.call<foo_t*>("test_ret_object", foo_ptr));  
+    assert(foo_ptr == fflua.call\<foo_t*\>("test_ret_object", foo_ptr));  
     //! 调用lua函数，c++ 对象作为返回值, 自动转换为基类  
-    base_t* base_ptr = fflua.call<base_t*>("test_ret_base_object", foo_ptr);  
+    base_t* base_ptr = fflua.call\<base_t*\>("test_ret_base_object", foo_ptr);  
     assert(base_ptr == foo_ptr);  
 
 9. 注册C++ 对象更容易  
