@@ -1,5 +1,6 @@
-FFLUA 是嵌入LUA，注册C++相关的对象到lua的封装库, FFLUA 拥有如下特性:
-1. FFLUA 载入函数、设置路径更简单
+FFLUA 是嵌入LUA，注册C++相关的对象到lua的封装库, FFLUA 拥有如下特性:  
+
+0. FFLUA 载入函数、设置路径更简单
     fflua_t fflua;
     try 
     {
