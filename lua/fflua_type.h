@@ -17,6 +17,8 @@ namespace ff
 
 #define INHERIT_TABLE "inherit_table"
 
+struct cpp_void_t{};
+
 struct lua_string_tool_t
 {
 	inline static const char* c_str(const string& s_) { return s_.c_str(); }
@@ -236,6 +238,14 @@ struct lua_op_t<lua_nil_t>
 
 };
 
+template<>
+struct lua_op_t<cpp_void_t>
+{
+    static int get_ret_value(lua_State* ls_, int pos_, cpp_void_t& param_)
+    {
+        return 0;
+    }
+};
 
 template<>
 struct lua_op_t<int64_t>

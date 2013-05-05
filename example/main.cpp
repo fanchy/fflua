@@ -111,7 +111,7 @@ int main(int argc, char* argv[])
         
         //! 调用lua函数，c++ 对象作为参数, foo_t 必须被注册过
         foo_t* foo_ptr = new foo_t(456);
-        fflua.call<bool>("test_object", foo_ptr);
+        fflua.call<void>("test_object", foo_ptr);
         
         //! 调用lua函数，c++ 对象作为返回值, foo_t 必须被注册过 
         assert(foo_ptr == fflua.call<foo_t*>("test_ret_object", foo_ptr));
