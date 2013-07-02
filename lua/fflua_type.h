@@ -187,7 +187,11 @@ struct reference_traits_t<const T*>
 {
     typedef T* arg_type_t;
 };
-
+template<>
+struct reference_traits_t<const char*>
+{
+    typedef char* arg_type_t;
+};
 template <typename T>
 struct init_value_traits_t;
 
@@ -225,6 +229,12 @@ struct lua_op_t<const char*>
     static void push_stack(lua_State* ls_, const char* arg_)
     {
         lua_pushstring(ls_, arg_);
+    }
+    static int lua_to_value(lua_State* ls_, int pos_, char*& param_)
+    {
+        const char* str = luaL_checkstring(ls_, pos_);
+        param_ = (char*)str;
+        return 0;
     }
 };
 
