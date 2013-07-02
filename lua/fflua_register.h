@@ -12,6 +12,7 @@ using namespace std;
 namespace ff
 {
 
+#define virtual_ctor int
 #define ctor void
 #define LUA_ARG_POS(x) (x)
 
@@ -367,6 +368,15 @@ fflua_register_t<CLASS_TYPE, CTOR_TYPE>::fflua_register_t(lua_State* ls_, const 
 	lua_pop(ls_, 2);
 }
 
+
+template <typename CLASS_TYPE>
+struct new_traits_t<CLASS_TYPE, int()>
+{
+    static  int lua_function(lua_State* ls_)
+    {
+        return 0;
+    }
+};
 
 template <typename CLASS_TYPE>
 struct new_traits_t<CLASS_TYPE, void()>
