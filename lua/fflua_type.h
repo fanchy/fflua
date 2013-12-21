@@ -187,11 +187,18 @@ struct reference_traits_t<const T*>
 {
     typedef T* arg_type_t;
 };
+template<typename T>
+struct reference_traits_t<const T&>
+{
+    typedef T arg_type_t;
+};
+
 template<>
 struct reference_traits_t<const char*>
 {
     typedef char* arg_type_t;
 };
+
 template <typename T>
 struct init_value_traits_t;
 
@@ -205,6 +212,12 @@ template <typename T>
 struct init_value_traits_t<const T*>
 {
     inline static T* value(){ return NULL; }
+};
+
+template <typename T>
+struct init_value_traits_t<const T&>
+{
+    inline static T value(){ return T(); }
 };
 
 template <>
@@ -289,6 +302,7 @@ struct lua_op_t<int64_t>
         return 0;
     }
 };
+
 template<> struct lua_op_t<uint64_t>
 {
     static void push_stack(lua_State* ls_, uint64_t arg_)
