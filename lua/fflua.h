@@ -151,46 +151,46 @@ public:
     RET_V call(const char* func_name_) throw (lua_exception_t);
 
     template<typename RET, typename ARG1>
-    RET_V call(const char* func_name_, ARG1 arg1_) throw (lua_exception_t);
+    RET_V call(const char* func_name_, const ARG1& arg1_) throw (lua_exception_t);
 
     template<typename RET, typename ARG1, typename ARG2>
-    RET_V call(const char* func_name_, ARG1 arg1_, ARG2 arg2_) throw (lua_exception_t);
+    RET_V call(const char* func_name_, const ARG1& arg1_, const ARG2& arg2_) throw (lua_exception_t);
 
     template<typename RET, typename ARG1, typename ARG2, typename ARG3>
-    RET_V call(const char* func_name_, ARG1 arg1_, ARG2 arg2_,
-             ARG3 arg3_) throw (lua_exception_t);
+    RET_V call(const char* func_name_, const ARG1& arg1_, const ARG2& arg2_,
+             const ARG3& arg3_) throw (lua_exception_t);
 
     template<typename RET, typename ARG1, typename ARG2, typename ARG3, typename ARG4>
-    RET_V call(const char* func_name_, ARG1 arg1_, ARG2 arg2_, ARG3 arg3_,
-             ARG4 arg4_) throw (lua_exception_t);
+    RET_V call(const char* func_name_, const ARG1& arg1_, const ARG2& arg2_, const ARG3& arg3_,
+             const ARG4& arg4_) throw (lua_exception_t);
 
     template<typename RET, typename ARG1, typename ARG2, typename ARG3, typename ARG4,
              typename ARG5>
-    RET_V call(const char* func_name_, ARG1 arg1_, ARG2 arg2_, ARG3 arg3_,
-             ARG4 arg4_, ARG5 arg5_) throw (lua_exception_t);
+    RET_V call(const char* func_name_, const ARG1& arg1_, const ARG2& arg2_, const ARG3& arg3_,
+             const ARG4& arg4_, const ARG5& arg5_) throw (lua_exception_t);
 
     template<typename RET, typename ARG1, typename ARG2, typename ARG3, typename ARG4,
              typename ARG5, typename ARG6>
-    RET_V call(const char* func_name_, ARG1 arg1_, ARG2 arg2_, ARG3 arg3_,
-             ARG4 arg4_, ARG5 arg5_, ARG6 arg6_) throw (lua_exception_t);
+    RET_V call(const char* func_name_, const ARG1& arg1_, const ARG2& arg2_, const ARG3& arg3_,
+             const ARG4& arg4_, const ARG5& arg5_, const ARG6& arg6_) throw (lua_exception_t);
 
     template<typename RET, typename ARG1, typename ARG2, typename ARG3, typename ARG4,
              typename ARG5, typename ARG6, typename ARG7>
-    RET_V call(const char* func_name_, ARG1 arg1_, ARG2 arg2_, ARG3 arg3_,
-             ARG4 arg4_, ARG5 arg5_, ARG6 arg6_,
-             ARG7 arg7_) throw (lua_exception_t);
+    RET_V call(const char* func_name_, const ARG1& arg1_, const ARG2& arg2_, const ARG3& arg3_,
+             const ARG4& arg4_, const ARG5& arg5_, const ARG6& arg6_,
+             const ARG7& arg7_) throw (lua_exception_t);
 
     template<typename RET, typename ARG1, typename ARG2, typename ARG3, typename ARG4,
              typename ARG5, typename ARG6, typename ARG7, typename ARG8>
-    RET_V call(const char* func_name_, ARG1 arg1_, ARG2 arg2_, ARG3 arg3_,
-             ARG4 arg4_, ARG5 arg5_, ARG6 arg6_, ARG7 arg7_,
-             ARG8 arg8_) throw (lua_exception_t);
+    RET_V call(const char* func_name_, const ARG1& arg1_, const ARG2& arg2_, const ARG3& arg3_,
+             const ARG4& arg4_, const ARG5& arg5_, const ARG6& arg6_, const ARG7& arg7_,
+             const ARG8& arg8_) throw (lua_exception_t);
 
     template<typename RET, typename ARG1, typename ARG2, typename ARG3, typename ARG4,
              typename ARG5, typename ARG6, typename ARG7, typename ARG8, typename ARG9>
-    RET_V call(const char* func_name_, ARG1 arg1_, ARG2 arg2_, ARG3 arg3_,
-             ARG4 arg4_, ARG5 arg5_, ARG6 arg6_, ARG7 arg7_,
-             ARG8 arg8_, ARG9 arg9_) throw (lua_exception_t);
+    RET_V call(const char* func_name_, const ARG1& arg1_, const ARG2& arg2_, const ARG3& arg3_,
+             const ARG4& arg4_, const ARG5& arg5_, const ARG6& arg6_, const ARG7& arg7_,
+             const ARG8& arg8_, const ARG9& arg9_) throw (lua_exception_t);
 
 private:
     lua_State*  m_ls;
@@ -270,7 +270,7 @@ RET_V fflua_t::call(const char* func_name_) throw (lua_exception_t)
 
 
 template<typename RET, typename ARG1>
-RET_V fflua_t::call(const char* func_name_, ARG1 arg1_) throw (lua_exception_t)
+RET_V fflua_t::call(const char* func_name_, const ARG1& arg1_) throw (lua_exception_t)
 {
     RET_V ret = init_value_traits_t<RET_V>::value();
 
@@ -300,7 +300,7 @@ RET_V fflua_t::call(const char* func_name_, ARG1 arg1_) throw (lua_exception_t)
 
 
 template<typename RET, typename ARG1, typename ARG2>
-RET_V fflua_t::call(const char* func_name_, ARG1 arg1_, ARG2 arg2_)
+RET_V fflua_t::call(const char* func_name_, const ARG1& arg1_, const ARG2& arg2_)
                                  throw (lua_exception_t)
 {
     RET_V ret = init_value_traits_t<RET_V>::value();
@@ -331,8 +331,8 @@ RET_V fflua_t::call(const char* func_name_, ARG1 arg1_, ARG2 arg2_)
 }
 
 template<typename RET, typename ARG1, typename ARG2, typename ARG3>
-RET_V fflua_t::call(const char* func_name_, ARG1 arg1_, ARG2 arg2_,
-                                 ARG3 arg3_) throw (lua_exception_t)
+RET_V fflua_t::call(const char* func_name_, const ARG1& arg1_, const ARG2& arg2_,
+                                 const ARG3& arg3_) throw (lua_exception_t)
 {
     RET_V ret = init_value_traits_t<RET_V>::value();
 
@@ -363,8 +363,8 @@ RET_V fflua_t::call(const char* func_name_, ARG1 arg1_, ARG2 arg2_,
 }
 
 template<typename RET, typename ARG1, typename ARG2, typename ARG3, typename ARG4>
-RET_V fflua_t::call(const char* func_name_, ARG1 arg1_, ARG2 arg2_, ARG3 arg3_,
-                                 ARG4 arg4_) throw (lua_exception_t)
+RET_V fflua_t::call(const char* func_name_, const ARG1& arg1_, const ARG2& arg2_, const ARG3& arg3_,
+                                 const ARG4& arg4_) throw (lua_exception_t)
 {
     RET_V ret = init_value_traits_t<RET_V>::value();
 
@@ -396,8 +396,8 @@ RET_V fflua_t::call(const char* func_name_, ARG1 arg1_, ARG2 arg2_, ARG3 arg3_,
 }
 
 template<typename RET, typename ARG1, typename ARG2, typename ARG3, typename ARG4, typename ARG5>
-RET_V fflua_t::call(const char* func_name_, ARG1 arg1_, ARG2 arg2_, ARG3 arg3_,
-                                 ARG4 arg4_, ARG5 arg5_) throw (lua_exception_t)
+RET_V fflua_t::call(const char* func_name_, const ARG1& arg1_, const ARG2& arg2_, const ARG3& arg3_,
+                                 const ARG4& arg4_, const ARG5& arg5_) throw (lua_exception_t)
 {
     RET_V ret = init_value_traits_t<RET_V>::value();
 
@@ -431,8 +431,8 @@ RET_V fflua_t::call(const char* func_name_, ARG1 arg1_, ARG2 arg2_, ARG3 arg3_,
 
 
 template<typename RET, typename ARG1, typename ARG2, typename ARG3, typename ARG4, typename ARG5, typename ARG6>
-RET_V fflua_t::call(const char* func_name_, ARG1 arg1_, ARG2 arg2_, ARG3 arg3_,
-                                 ARG4 arg4_, ARG5 arg5_, ARG6 arg6_) throw (lua_exception_t)
+RET_V fflua_t::call(const char* func_name_, const ARG1& arg1_, const ARG2& arg2_, const ARG3& arg3_,
+                                 const ARG4& arg4_, const ARG5& arg5_, const ARG6& arg6_) throw (lua_exception_t)
 {
     RET_V ret = init_value_traits_t<RET_V>::value();
 
@@ -468,9 +468,9 @@ RET_V fflua_t::call(const char* func_name_, ARG1 arg1_, ARG2 arg2_, ARG3 arg3_,
 
 template<typename RET, typename ARG1, typename ARG2, typename ARG3, typename ARG4,
                 typename ARG5, typename ARG6, typename ARG7>
-RET_V fflua_t::call(const char* func_name_, ARG1 arg1_, ARG2 arg2_, ARG3 arg3_,
-                                 ARG4 arg4_, ARG5 arg5_, ARG6 arg6_,
-                                 ARG7 arg7_) throw (lua_exception_t)
+RET_V fflua_t::call(const char* func_name_, const ARG1& arg1_, const ARG2& arg2_, const ARG3& arg3_,
+                                 const ARG4& arg4_, const ARG5& arg5_, const ARG6& arg6_,
+                                 const ARG7& arg7_) throw (lua_exception_t)
 {
     RET_V ret = init_value_traits_t<RET_V>::value();
 
@@ -507,9 +507,9 @@ RET_V fflua_t::call(const char* func_name_, ARG1 arg1_, ARG2 arg2_, ARG3 arg3_,
 
 template<typename RET, typename ARG1, typename ARG2, typename ARG3, typename ARG4,
                 typename ARG5, typename ARG6, typename ARG7, typename ARG8>
-RET_V fflua_t::call(const char* func_name_, ARG1 arg1_, ARG2 arg2_, ARG3 arg3_,
-                                 ARG4 arg4_, ARG5 arg5_, ARG6 arg6_, ARG7 arg7_,
-                                 ARG8 arg8_) throw (lua_exception_t)
+RET_V fflua_t::call(const char* func_name_, const ARG1& arg1_, const ARG2& arg2_, const ARG3& arg3_,
+                                 const ARG4& arg4_, const ARG5& arg5_, const ARG6& arg6_, const ARG7& arg7_,
+                                 const ARG8& arg8_) throw (lua_exception_t)
 {
     RET_V ret = init_value_traits_t<RET_V>::value();
 
@@ -547,9 +547,9 @@ RET_V fflua_t::call(const char* func_name_, ARG1 arg1_, ARG2 arg2_, ARG3 arg3_,
 
 template<typename RET, typename ARG1, typename ARG2, typename ARG3, typename ARG4,
                 typename ARG5, typename ARG6, typename ARG7, typename ARG8, typename ARG9>
-RET_V fflua_t::call(const char* func_name_, ARG1 arg1_, ARG2 arg2_, ARG3 arg3_,
-                                 ARG4 arg4_, ARG5 arg5_, ARG6 arg6_, ARG7 arg7_,
-                                 ARG8 arg8_, ARG9 arg9_) throw (lua_exception_t)
+RET_V fflua_t::call(const char* func_name_, const ARG1& arg1_, const ARG2& arg2_, const ARG3& arg3_,
+                                 const ARG4& arg4_, const ARG5& arg5_, const ARG6& arg6_, const ARG7& arg7_,
+                                 const ARG8& arg8_, const ARG9& arg9_) throw (lua_exception_t)
 {
     RET_V ret = init_value_traits_t<RET_V>::value();
 
