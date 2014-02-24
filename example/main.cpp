@@ -51,6 +51,13 @@ void dumy(map<string, string> ret, vector<int> a, list<string> b, set<int64_t> c
 	printf("in %s end ------------\n", __FUNCTION__);
 }
 
+class clazz{
+public:
+    static void static_func(){
+        printf("in clazz::%s end ------------\n", __FUNCTION__);
+    }
+};
+
 static void lua_reg(lua_State* ls)
 {
     //! 注册基类函数, ctor() 为构造函数的类型
@@ -65,6 +72,11 @@ static void lua_reg(lua_State* ls)
 
 	fflua_register_t<>(ls)
 				.def(&dumy, "dumy");                //! 注册静态函数
+
+    
+    fflua_register_t<clazz, ctor()>(ls, "clazz")
+				.def(&clazz::static_func, "static_func"); 
+    
 }
 
 int main(int argc, char* argv[])
