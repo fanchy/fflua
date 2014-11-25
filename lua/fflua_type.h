@@ -1,7 +1,31 @@
 #ifndef _FF_LUA_TYPE_H_
 #define _FF_LUA_TYPE_H_
 
+
+#ifndef  _WIN32
 #include <stdint.h>
+#define SPRINTF_F snprintf
+#else
+typedef  long int64_t;
+typedef  unsigned long uint64_t;
+typedef  int int32_t;
+typedef  unsigned int uint32_t;
+typedef  short int16_t;
+typedef  unsigned short uint16_t;
+typedef  char int8_t;
+typedef  unsigned char uint8_t;
+#define SPRINTF_F _snprintf_s
+
+struct strtoll_tool_t
+{
+    static long do_strtoll(const char* s, const char*, int){
+        return atol(s);
+    }
+};
+#define strtoll strtoll_tool_t::do_strtoll
+#define strtoull (unsigned long)strtoll_tool_t::do_strtoll
+#endif
+
 #include <stdlib.h>
 #include <lua.hpp>
 #include <string.h>
@@ -100,11 +124,15 @@ public:
 
         va_list argp;
         va_start(argp, fmt);
+#ifndef _WIN32
         vsnprintf(buff, sizeof(buff), fmt, argp);
+#else
+        vsnprintf_s(buff, sizeof(buff), sizeof(buff), fmt, argp);
+#endif
         va_end(argp);
 
         ret = buff;
-        snprintf(buff, sizeof(buff), " tracback:%s", lua_tostring(ls_, -1));
+        SPRINTF_F(buff, sizeof(buff), " tracback:%s", lua_tostring(ls_, -1));
         ret += buff;
 
         return ret;
@@ -640,7 +668,7 @@ struct lua_op_t<void*>
         if (!lua_isuserdata(ls_, pos_))
         {
             char buff[128];
-            snprintf(buff, sizeof(buff), "userdata param expected, but type<%s> provided",
+            SPRINTF_F(buff, sizeof(buff), "userdata param expected, but type<%s> provided",
                                          lua_typename(ls_, lua_type(ls_, pos_)));
             printf("%s\n", buff);
             return -1;
@@ -731,7 +759,7 @@ struct lua_op_t<T*>
         if (NULL == arg_data || 0 == lua_getmetatable(ls_, pos_))
 		{
 			char buff[128];
-			snprintf(buff, sizeof(buff), "`%s` arg1 connot be null",
+			SPRINTF_F(buff, sizeof(buff), "`%s` arg1 connot be null",
 										 lua_type_info_t<T>::get_name());
 			luaL_argerror(ls_, pos_, buff);
 		}
@@ -744,7 +772,7 @@ struct lua_op_t<T*>
 			{
 				lua_pop(ls_, 3);
 				char buff[128];
-				snprintf(buff, sizeof(buff), "`%s` arg1 type not equal",
+				SPRINTF_F(buff, sizeof(buff), "`%s` arg1 type not equal",
 											 lua_type_info_t<T>::get_name());
 				luaL_argerror(ls_, pos_, buff);
 			}
@@ -759,7 +787,7 @@ struct lua_op_t<T*>
         if (NULL == ret_ptr)
         {
             char buff[128];
-            snprintf(buff, sizeof(buff), "`%s` object ptr can't be null",
+            SPRINTF_F(buff, sizeof(buff), "`%s` object ptr can't be null",
                                          lua_type_info_t<T>::get_name());
             luaL_argerror(ls_, pos_, buff);
         }

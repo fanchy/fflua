@@ -1,4 +1,4 @@
-#include <iostream>
+﻿#include <iostream>
 #include <string>
 #include <assert.h>
 using namespace std;
@@ -90,8 +90,11 @@ int main(int argc, char* argv[])
         
         //! 载入lua文件
         fflua.add_package_path("./");
+#ifdef _WIN32
+        fflua.load_file("../test.lua");
+#else
         fflua.load_file("test.lua");
-        
+#endif
         //! 获取全局变量
         int var = 0;
         assert(0 == fflua.get_global_variable("test_var", var));
@@ -135,6 +138,11 @@ int main(int argc, char* argv[])
     catch (exception& e)
     {
         printf("exception:%s\n", e.what());
+
+
     }
+#ifdef _WIN32
+    system("pause");
+#endif
     return 0;
 }

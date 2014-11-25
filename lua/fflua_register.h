@@ -141,7 +141,7 @@ struct metatable_register_impl_t
 	    if (NULL == arg_data)
 	    {
 	        char buff[512];
-	        snprintf(buff, sizeof(buff), "`%s` expect arg 1, but arg == null",
+	        SPRINTF_F(buff, sizeof(buff), "`%s` expect arg 1, but arg == null",
 	        								lua_type_info_t<CLASS_TYPE>::get_name());
 	        luaL_argerror(ls_, 1, buff);
 	    }
@@ -185,7 +185,7 @@ struct metatable_register_impl_t
 	    if (NULL == ret_ptr)
 	    {
 	        char buff[128];
-	        snprintf(buff, sizeof(buff), "`%s` object ptr can't be null",
+	        SPRINTF_F(buff, sizeof(buff), "`%s` object ptr can't be null",
 	        								lua_type_info_t<CLASS_TYPE>::get_name());
 	        luaL_argerror(ls_, 1, buff);
 	    }
