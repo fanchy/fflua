@@ -113,7 +113,7 @@ int main(int argc, char* argv[])
         
         //! 调用lua函数，stl类型作为参数， 自动转换为lua talbe
         vector<int> vec;        vec.push_back(100);
-        list<float> lt;         lt.push_back(99.99);
+        list<float> lt;         lt.push_back((float)99.99);
         set<string> st;         st.insert("OhNIce");
         map<string, int> mp;    mp["key"] = 200;
         fflua.call<string>("test_stl", vec, lt, st,  mp);

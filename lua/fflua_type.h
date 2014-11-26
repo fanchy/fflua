@@ -157,11 +157,19 @@ struct lua_type_info_t
 	static void set_name(const string& name_, string inherit_name_ = "")
 	{
 		size_t n = name_.length() > sizeof(name) - 1? sizeof(name) - 1: name_.length();
+#ifndef _WIN32
 		::strncpy(name, name_.c_str(), n);
+#else
+        ::strncpy_s(name, name_.c_str(), n);
+#endif
 		if (false == inherit_name_.empty())
 		{
 			n = inherit_name_.length() > sizeof(inherit_name) - 1? sizeof(inherit_name) - 1: inherit_name_.length();
+#ifndef _WIN32
 			::strncpy(inherit_name, inherit_name_.c_str(), n);
+#else
+            ::strncpy_s(inherit_name, inherit_name_.c_str(), n);
+#endif
 		}
 	}
 	inline static const char* get_name()
@@ -516,13 +524,13 @@ struct lua_op_t<bool>
             return -1;
         }
 
-        param_ = (bool)lua_toboolean(ls_, pos_);
+        param_ = (0 != lua_toboolean(ls_, pos_));
         return 0;
     }
     static int lua_to_value(lua_State* ls_, int pos_, bool& param_)
     {
 		luaL_checktype(ls_, pos_,  LUA_TBOOLEAN);
-        param_ = (bool)lua_toboolean(ls_, pos_);
+        param_ = (0 != lua_toboolean(ls_, pos_));
         return 0;
     }
 };

@@ -1,4 +1,4 @@
-#ifndef _FF_LUA_REGISTER_H_
+﻿#ifndef _FF_LUA_REGISTER_H_
 #define _FF_LUA_REGISTER_H_
 
 #include <lua.hpp>
