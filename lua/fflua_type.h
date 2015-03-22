@@ -269,11 +269,38 @@ struct init_value_traits_t<const string&>
 };
 
 template<typename T>
-struct lua_op_t;
+struct lua_op_t
+{
+    static void push_stack(lua_State* ls_, const char* arg_)
+    {
+        lua_pushstring(ls_, arg_);
+    }
+    /*
+    static int lua_to_value(lua_State* ls_, int pos_, char*& param_)
+    {
+        const char* str = luaL_checkstring(ls_, pos_);
+        param_ = (char*)str;
+        return 0;
+    }*/
+};
 
 
 template<>
 struct lua_op_t<const char*>
+{
+    static void push_stack(lua_State* ls_, const char* arg_)
+    {
+        lua_pushstring(ls_, arg_);
+    }
+    static int lua_to_value(lua_State* ls_, int pos_, char*& param_)
+    {
+        const char* str = luaL_checkstring(ls_, pos_);
+        param_ = (char*)str;
+        return 0;
+    }
+};
+template<>
+struct lua_op_t<char*>
 {
     static void push_stack(lua_State* ls_, const char* arg_)
     {
