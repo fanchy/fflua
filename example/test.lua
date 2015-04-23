@@ -72,4 +72,4 @@ function test_ret_base_object(foo_obj)
 end
 
     
-clazz:static_func()
+clazz.static_func()
