@@ -1,4 +1,4 @@
-#ifndef _FF_LUA_TYPE_H_
+﻿#ifndef _FF_LUA_TYPE_H_
 #define _FF_LUA_TYPE_H_
 
 
