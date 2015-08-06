@@ -1,4 +1,4 @@
-#ifndef _FF_LUA_H_
+ï»¿#ifndef _FF_LUA_H_
 #define _FF_LUA_H_
 
 #ifndef  _WIN32
@@ -16,7 +16,7 @@ using namespace std;
 
 namespace ff
 {
-//! ±íÊ¾voidÀàĞÍ£¬ÓÉÓÚvoidÀàĞÍ²»ÄÜreturn£¬ÓÃvoid_ignore_tÊÊÅä
+//! è¡¨ç¤ºvoidç±»å‹ï¼Œç”±äºvoidç±»å‹ä¸èƒ½returnï¼Œç”¨void_ignore_té€‚é…
 template<typename T>
 struct void_ignore_t;
 
