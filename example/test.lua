@@ -9,6 +9,12 @@ function dump_table(tb, str)
     end
 end
 
+Mod = {}
+function Mod:funcTest1(arg1, arg2)
+    print("in funcTest1:", self, arg1, arg2)
+    return true
+end
+Mod.funcTest1()
 -- 测试调用lua
 function test_func(arg1, arg2, arg3, arg4)
     print("in test_func:", arg1, arg2, arg3, arg4)
@@ -72,4 +78,4 @@ function test_ret_base_object(foo_obj)
 end
 
     
-clazz.static_func()
+clazz:static_func()
