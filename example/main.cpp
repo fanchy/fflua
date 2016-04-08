@@ -121,7 +121,6 @@ int main(int argc, char* argv[])
         fflua.call<string>("test_stl", vec, lt, st,  mp);
         
         //! 调用lua 函数返回 talbe，自动转换为stl结构
-        return 0;
         vec = fflua.call<vector<int> >("test_return_stl_vector");
         lt  = fflua.call<list<float> >("test_return_stl_list");
         st  = fflua.call<set<string> >("test_return_stl_set");
