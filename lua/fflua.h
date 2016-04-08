@@ -1,4 +1,4 @@
-Ôªø#ifndef _FF_LUA_H_
+#ifndef _FF_LUA_H_
 #define _FF_LUA_H_
 
 #ifndef  _WIN32
@@ -16,7 +16,7 @@ using namespace std;
 
 namespace ff
 {
-//! Ë°®Á§∫voidÁ±ªÂûãÔºåÁî±‰∫évoidÁ±ªÂûã‰∏çËÉΩreturnÔºåÁî®void_ignore_tÈÄÇÈÖç
+//! ±Ì ævoid¿‡–Õ£¨”…”⁄void¿‡–Õ≤ªƒ‹return£¨”√void_ignore_t  ≈‰
 template<typename T>
 struct void_ignore_t;
 
@@ -41,8 +41,9 @@ class fflua_t
         STACK_MIN_NUM = 20
     };
 public:
-    fflua_t():
-		m_ls(NULL)
+    fflua_t(bool b = false):
+		m_ls(NULL),
+        m_bEnableModFunc(b)
 	{
 		m_ls = ::luaL_newstate();
 		::luaL_openlibs(m_ls);
@@ -56,6 +57,7 @@ public:
         }
     }
     void dump_stack() const { fflua_tool_t::dump_stack(m_ls); }
+    void setModFuncFlag(bool b) { m_bEnableModFunc = b; }
 
     lua_State* get_lua_state()
     {
@@ -196,7 +198,52 @@ public:
              const ARG8& arg8_, const ARG9& arg9_) ;
 
 private:
+    int  getFuncByName(const char* func_name_)
+    {
+        if (false == m_bEnableModFunc)
+        {
+            lua_getglobal(m_ls, func_name_);
+            return 0;
+        }
+        char tmpBuff[512] = {0};
+        char* begin = tmpBuff;
+        for (unsigned int i = 0; i < sizeof(tmpBuff); ++i)
+        {
+            char c = func_name_[i];
+            tmpBuff[i] = c;
+            if (c == '\0')
+            {
+                break;
+            }
+            
+            if (c == '.')
+            {
+                tmpBuff[i] = '\0';
+                lua_getglobal(m_ls, lua_string_tool_t::c_str(begin));
+                const char* begin2 = func_name_ + i + 1;
+                lua_getfield(m_ls, -1, begin2);
+                lua_remove(m_ls, -2);
+                return 0;
+            }
+            else if (c == ':')
+            {
+                tmpBuff[i] = '\0';
+                lua_getglobal(m_ls, begin);
+                const char* begin2 = func_name_ + i + 1;
+                lua_getfield(m_ls, -1, begin2);
+                lua_pushvalue(m_ls, -2);
+                lua_remove(m_ls, -3);
+                return 1;
+            }
+        }
+        
+        lua_getglobal(m_ls, func_name_);
+        return 0;
+    }
+
+private:
     lua_State*  m_ls;
+    bool        m_bEnableModFunc;
 };
 
 template<typename T>
@@ -249,9 +296,9 @@ RET_V fflua_t::call(const char* func_name_)
 {
     RET_V ret = init_value_traits_t<RET_V>::value();
 
-    lua_getglobal(m_ls, lua_string_tool_t::c_str(func_name_));
-
-    if (lua_pcall(m_ls, 0, 1, 0) != 0)
+    int tmpArg = getFuncByName(func_name_);
+    
+    if (lua_pcall(m_ls, tmpArg + 0, 1, 0) != 0)
     {
         string err = fflua_tool_t::dump_error(m_ls, "lua_pcall failed func_name<%s>", func_name_);
         lua_pop(m_ls, 1);
@@ -277,11 +324,11 @@ RET_V fflua_t::call(const char* func_name_, const ARG1& arg1_)
 {
     RET_V ret = init_value_traits_t<RET_V>::value();
 
-    lua_getglobal(m_ls, lua_string_tool_t::c_str(func_name_));
+    int tmpArg = getFuncByName(func_name_);
 
     lua_op_t<ARG1>::push_stack(m_ls, arg1_);
 
-    if (lua_pcall(m_ls, 1, 1, 0) != 0)
+    if (lua_pcall(m_ls, tmpArg + 1, 1, 0) != 0)
     {
         string err = fflua_tool_t::dump_error(m_ls, "lua_pcall failed func_name<%s>", func_name_);
         lua_pop(m_ls, 1);
@@ -308,12 +355,12 @@ RET_V fflua_t::call(const char* func_name_, const ARG1& arg1_, const ARG2& arg2_
 {
     RET_V ret = init_value_traits_t<RET_V>::value();
 
-    lua_getglobal(m_ls, lua_string_tool_t::c_str(func_name_));
+    int tmpArg = getFuncByName(func_name_);
 
     lua_op_t<ARG1>::push_stack(m_ls, arg1_);
     lua_op_t<ARG2>::push_stack(m_ls, arg2_);
 
-    if (lua_pcall(m_ls, 2, 1, 0) != 0)
+    if (lua_pcall(m_ls, tmpArg + 2, 1, 0) != 0)
     {
         string err = fflua_tool_t::dump_error(m_ls, "lua_pcall failed func_name<%s>", func_name_);
         lua_pop(m_ls, 1);
@@ -339,13 +386,13 @@ RET_V fflua_t::call(const char* func_name_, const ARG1& arg1_, const ARG2& arg2_
 {
     RET_V ret = init_value_traits_t<RET_V>::value();
 
-    lua_getglobal(m_ls, lua_string_tool_t::c_str(func_name_));
+    int tmpArg = getFuncByName(func_name_);
 
     lua_op_t<ARG1>::push_stack(m_ls, arg1_);
     lua_op_t<ARG2>::push_stack(m_ls, arg2_);
     lua_op_t<ARG3>::push_stack(m_ls, arg3_);
 
-    if (lua_pcall(m_ls, 3, 1, 0) != 0)
+    if (lua_pcall(m_ls, tmpArg + 3, 1, 0) != 0)
     {
         string err = fflua_tool_t::dump_error(m_ls, "lua_pcall failed func_name<%s>", func_name_);
         lua_pop(m_ls, 1);
@@ -371,14 +418,14 @@ RET_V fflua_t::call(const char* func_name_, const ARG1& arg1_, const ARG2& arg2_
 {
     RET_V ret = init_value_traits_t<RET_V>::value();
 
-    lua_getglobal(m_ls, lua_string_tool_t::c_str(func_name_));
+    int tmpArg = getFuncByName(func_name_);
 
     lua_op_t<ARG1>::push_stack(m_ls, arg1_);
     lua_op_t<ARG2>::push_stack(m_ls, arg2_);
     lua_op_t<ARG3>::push_stack(m_ls, arg3_);
     lua_op_t<ARG4>::push_stack(m_ls, arg4_);
 
-    if (lua_pcall(m_ls, 4, 1, 0) != 0)
+    if (lua_pcall(m_ls, tmpArg + 4, 1, 0) != 0)
     {
         string err = fflua_tool_t::dump_error(m_ls, "lua_pcall failed func_name<%s>", func_name_);
         lua_pop(m_ls, 1);
@@ -404,7 +451,7 @@ RET_V fflua_t::call(const char* func_name_, const ARG1& arg1_, const ARG2& arg2_
 {
     RET_V ret = init_value_traits_t<RET_V>::value();
 
-    lua_getglobal(m_ls, lua_string_tool_t::c_str(func_name_));
+    int tmpArg = getFuncByName(func_name_);
 
     lua_op_t<ARG1>::push_stack(m_ls, arg1_);
     lua_op_t<ARG2>::push_stack(m_ls, arg2_);
@@ -412,7 +459,7 @@ RET_V fflua_t::call(const char* func_name_, const ARG1& arg1_, const ARG2& arg2_
     lua_op_t<ARG4>::push_stack(m_ls, arg4_);
     lua_op_t<ARG5>::push_stack(m_ls, arg5_);
 
-    if (lua_pcall(m_ls, 5, 1, 0) != 0)
+    if (lua_pcall(m_ls, tmpArg + 5, 1, 0) != 0)
     {
         string err = fflua_tool_t::dump_error(m_ls, "lua_pcall failed func_name<%s>", func_name_);
         lua_pop(m_ls, 1);
@@ -439,7 +486,7 @@ RET_V fflua_t::call(const char* func_name_, const ARG1& arg1_, const ARG2& arg2_
 {
     RET_V ret = init_value_traits_t<RET_V>::value();
 
-    lua_getglobal(m_ls, lua_string_tool_t::c_str(func_name_));
+    int tmpArg = getFuncByName(func_name_);
 
     lua_op_t<ARG1>::push_stack(m_ls, arg1_);
     lua_op_t<ARG2>::push_stack(m_ls, arg2_);
@@ -448,7 +495,7 @@ RET_V fflua_t::call(const char* func_name_, const ARG1& arg1_, const ARG2& arg2_
     lua_op_t<ARG5>::push_stack(m_ls, arg5_);
     lua_op_t<ARG6>::push_stack(m_ls, arg6_);
 
-    if (lua_pcall(m_ls, 6, 1, 0) != 0)
+    if (lua_pcall(m_ls, tmpArg + 6, 1, 0) != 0)
     {
         string err = fflua_tool_t::dump_error(m_ls, "lua_pcall failed func_name<%s>", func_name_);
         lua_pop(m_ls, 1);
@@ -477,7 +524,7 @@ RET_V fflua_t::call(const char* func_name_, const ARG1& arg1_, const ARG2& arg2_
 {
     RET_V ret = init_value_traits_t<RET_V>::value();
 
-    lua_getglobal(m_ls, lua_string_tool_t::c_str(func_name_));
+    int tmpArg = getFuncByName(func_name_);
 
     lua_op_t<ARG1>::push_stack(m_ls, arg1_);
     lua_op_t<ARG2>::push_stack(m_ls, arg2_);
@@ -487,7 +534,7 @@ RET_V fflua_t::call(const char* func_name_, const ARG1& arg1_, const ARG2& arg2_
     lua_op_t<ARG6>::push_stack(m_ls, arg6_);
     lua_op_t<ARG7>::push_stack(m_ls, arg7_);
 
-    if (lua_pcall(m_ls, 7, 1, 0) != 0)
+    if (lua_pcall(m_ls, tmpArg + 7, 1, 0) != 0)
     {
         string err = fflua_tool_t::dump_error(m_ls, "lua_pcall failed func_name<%s>", func_name_);
         lua_pop(m_ls, 1);
@@ -516,7 +563,7 @@ RET_V fflua_t::call(const char* func_name_, const ARG1& arg1_, const ARG2& arg2_
 {
     RET_V ret = init_value_traits_t<RET_V>::value();
 
-    lua_getglobal(m_ls, lua_string_tool_t::c_str(func_name_));
+    int tmpArg = getFuncByName(func_name_);
 
     lua_op_t<ARG1>::push_stack(m_ls, arg1_);
     lua_op_t<ARG2>::push_stack(m_ls, arg2_);
@@ -527,7 +574,7 @@ RET_V fflua_t::call(const char* func_name_, const ARG1& arg1_, const ARG2& arg2_
     lua_op_t<ARG7>::push_stack(m_ls, arg7_);
     lua_op_t<ARG8>::push_stack(m_ls, arg8_);
 
-    if (lua_pcall(m_ls, 8, 1, 0) != 0)
+    if (lua_pcall(m_ls, tmpArg + 8, 1, 0) != 0)
     {
         string err = fflua_tool_t::dump_error(m_ls, "lua_pcall failed func_name<%s>", func_name_);
         lua_pop(m_ls, 1);
@@ -556,7 +603,7 @@ RET_V fflua_t::call(const char* func_name_, const ARG1& arg1_, const ARG2& arg2_
 {
     RET_V ret = init_value_traits_t<RET_V>::value();
 
-    lua_getglobal(m_ls, lua_string_tool_t::c_str(func_name_));
+    int tmpArg = getFuncByName(func_name_);
 
     lua_op_t<ARG1>::push_stack(m_ls, arg1_);
     lua_op_t<ARG2>::push_stack(m_ls, arg2_);
@@ -568,7 +615,7 @@ RET_V fflua_t::call(const char* func_name_, const ARG1& arg1_, const ARG2& arg2_
     lua_op_t<ARG8>::push_stack(m_ls, arg8_);
     lua_op_t<ARG9>::push_stack(m_ls, arg9_);
 
-    if (lua_pcall(m_ls, 9, 1, 0) != 0)
+    if (lua_pcall(m_ls, tmpArg + 9, 1, 0) != 0)
     {
         string err = fflua_tool_t::dump_error(m_ls, "lua_pcall failed func_name<%s>", func_name_);
         lua_pop(m_ls, 1);

@@ -85,6 +85,7 @@ int main(int argc, char* argv[])
 	fflua_t fflua;
     try 
     {
+        fflua.setModFuncFlag(true);
         //! 注册C++ 对象到lua中
         fflua.reg(lua_reg);
         
@@ -110,6 +111,7 @@ int main(int argc, char* argv[])
         double  arg3 = 3;
         string  arg4 = "4";
         fflua.call<bool>("test_func", arg1, arg2, arg3,  arg4);
+        fflua.call<bool>("Mod:funcTest1", arg1, arg2);
         
         //! 调用lua函数，stl类型作为参数， 自动转换为lua talbe
         vector<int> vec;        vec.push_back(100);
@@ -119,6 +121,7 @@ int main(int argc, char* argv[])
         fflua.call<string>("test_stl", vec, lt, st,  mp);
         
         //! 调用lua 函数返回 talbe，自动转换为stl结构
+        return 0;
         vec = fflua.call<vector<int> >("test_return_stl_vector");
         lt  = fflua.call<list<float> >("test_return_stl_list");
         st  = fflua.call<set<string> >("test_return_stl_set");
