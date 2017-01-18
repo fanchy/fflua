@@ -280,7 +280,11 @@ struct basetype_ptr_traits_t<float>
 {
     typedef float arg_type_t;
 };
-
+template<>
+struct basetype_ptr_traits_t<bool>
+{
+    typedef bool arg_type_t;
+};
 
 template<>
 struct basetype_ptr_traits_t<double>
