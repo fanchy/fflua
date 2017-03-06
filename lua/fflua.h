@@ -16,7 +16,7 @@ using namespace std;
 
 namespace ff
 {
-//! 表示void类型，由于void类型不能return，用void_ignore_t适配
+//! 琛ㄧずvoid绫诲瀷锛岀敱浜巚oid绫诲瀷涓嶈兘return锛岀敤void_ignore_t閫傞厤
 template<typename T>
 struct void_ignore_t;
 
@@ -107,7 +107,7 @@ public:
 	{
 		if (luaL_dostring(m_ls, str_))
 		{
-			string err = fflua_tool_t::dump_error(m_ls, "fflua_t::run_string ::lua_pcall faled str<%s>", str_);
+			string err = fflua_tool_t::dump_error(m_ls, "fflua_t::run_string ::lua_pcall failed str<%s>", str_);
 			::lua_pop(m_ls, 1);
 			throw lua_exception_t(err);
 		}
@@ -146,7 +146,7 @@ public:
 
 		if (::lua_pcall(m_ls, 0, 0, 0) != 0)
 		{
-			string err = fflua_tool_t::dump_error(m_ls, "lua_pcall faled func_name<%s>", func_name_);
+			string err = fflua_tool_t::dump_error(m_ls, "lua_pcall failed func_name<%s>", func_name_);
 			::lua_pop(m_ls, 1);
 			throw lua_exception_t(err);
 		}
