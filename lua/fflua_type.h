@@ -6,6 +6,8 @@
 #include <stdint.h>
 #define SPRINTF_F snprintf
 #else
+#include <stdint.h>
+/*
 typedef  long int64_t;
 typedef  unsigned long uint64_t;
 typedef  int int32_t;
@@ -14,6 +16,7 @@ typedef  short int16_t;
 typedef  unsigned short uint16_t;
 typedef  char int8_t;
 typedef  unsigned char uint8_t;
+*/
 #define SPRINTF_F _snprintf_s
 
 struct strtoll_tool_t
@@ -531,14 +534,25 @@ struct lua_op_t<int64_t>
 {
     static void push_stack(lua_State* ls_, int64_t arg_)
     {
+#if LUA_VERSION_NUM >= 503
+		lua_pushinteger(ls_, arg_);
+#else
         stringstream ss;
         ss << arg_;
         string str = ss.str();
         lua_pushlstring(ls_, str.c_str(), str.length());
+#endif
     }
 
     static int get_ret_value(lua_State* ls_, int pos_, int64_t& param_)
     {
+#if LUA_VERSION_NUM >= 503
+		if (!lua_isinteger(ls_, pos_))
+		{
+			return -1;
+		}
+		param_ = lua_tointeger(ls_, pos_);
+#else
         if (!lua_isstring(ls_, pos_))
         {
             return -1;
@@ -547,14 +561,19 @@ struct lua_op_t<int64_t>
         size_t len  = 0;
         const char* src = lua_tolstring(ls_, pos_, &len);
         param_ = (int64_t)strtoll(src, NULL, 10);
+#endif
         return 0;
     }
 
     static int lua_to_value(lua_State* ls_, int pos_, int64_t& param_)
     {
+#if LUA_VERSION_NUM >= 503
+		param_ = luaL_checkinteger(ls_, pos_);
+#else
         size_t len = 0;
         const char* str = luaL_checklstring(ls_, pos_, &len);
         param_ = (int64_t)strtoll(str, NULL, 10);
+#endif
         return 0;
     }
 };

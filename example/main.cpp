@@ -110,7 +110,7 @@ int main(int argc, char* argv[])
         float   arg2 = 2;
         double  arg3 = 3;
         string  arg4 = "4";
-        fflua.call<bool>("test_func", arg1, arg2, arg3,  arg4);
+		fflua.call<int32_t>("test_func", arg1, arg2, arg3, arg4);
         fflua.call<bool>("Mod:funcTest1", arg1, arg2);
         
         //! 调用lua函数，stl类型作为参数， 自动转换为lua talbe

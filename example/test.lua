@@ -23,6 +23,7 @@ function test_func(arg1, arg2, arg3, arg4)
     lt = {4,5,6}
     st = {7,8,9}
     dumy(mp, vc, lt, st)
+    return arg1
 end
 
 -- 接受stl参数
