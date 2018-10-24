@@ -655,6 +655,32 @@ struct lua_op_t<uint8_t>
 		return 0;
 	}
 };
+#ifdef _WIN32
+
+template<> struct lua_op_t<char>
+{
+
+	static void push_stack(lua_State* ls_, char arg_)
+	{
+		lua_pushnumber(ls_, (lua_Number)arg_);
+	}
+	static int get_ret_value(lua_State* ls_, int pos_, char& param_)
+	{
+		if (!lua_isnumber(ls_, pos_))
+		{
+			return -1;
+		}
+		param_ = (char)lua_tonumber(ls_, pos_);
+		return 0;
+	}
+	static int lua_to_value(lua_State* ls_, int pos_, char& param_)
+	{
+		param_ = (char)luaL_checknumber(ls_, pos_);
+		return 0;
+	}
+};
+
+#endif
 template<> struct lua_op_t<int16_t>
 {
 	static void push_stack(lua_State* ls_, int16_t arg_)
