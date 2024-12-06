@@ -37,6 +37,7 @@ struct strtoll_tool_t
 #include <list>
 #include <set>
 #include <map>
+#include <deque>
 using namespace std;
 
 namespace ff
@@ -324,6 +325,22 @@ struct basetype_ptr_traits_t<list<T> >
 {
     typedef list<T> arg_type_t;
 };
+
+template<typename T>
+struct basetype_ptr_traits_t<deque<T> >
+{
+	typedef deque<T> arg_type_t;
+};
+template<typename T>
+struct basetype_ptr_traits_t<deque<T> &>
+{
+    typedef deque<T> arg_type_t;
+};
+template<typename T>
+struct basetype_ptr_traits_t<const deque<T>&>
+{
+    typedef deque<T> arg_type_t;
+};
 template<typename T>
 struct basetype_ptr_traits_t<set<T> >
 {
@@ -467,17 +484,64 @@ struct init_value_traits_t<const string&>
 template<typename T>
 struct lua_op_t
 {
-    static void push_stack(lua_State* ls_, const char* arg_)
+    static void push_stack(lua_State* ls_, const T& arg_)
     {
-        lua_pushstring(ls_, arg_);
+        void* ptr = lua_newuserdata(ls_, sizeof(userdata_for_object_t<T>));
+        new (ptr) userdata_for_object_t<T>((T*)&arg_);
+
+        luaL_getmetatable(ls_, lua_type_info_t<T>::get_name());
+        lua_setmetatable(ls_, -2);
+        //T* ptmp = (T*)&arg_;
+        //lua_op_t<T*>::push_stack(ls_, ptmp);
     }
-    /*
-    static int lua_to_value(lua_State* ls_, int pos_, char*& param_)
+    static int lua_to_value(lua_State* ls_, int pos_, T& param_)
     {
-        const char* str = luaL_checkstring(ls_, pos_);
-        param_ = (char*)str;
+        if (false == lua_type_info_t<T>::is_registed())
+        {
+            string strErr = string("type not supported1:") + __FUNCTION__;
+            luaL_argerror(ls_, pos_, strErr.c_str());
+        }
+        void* arg_data = lua_touserdata(ls_, pos_);
+
+        if (NULL == arg_data || 0 == lua_getmetatable(ls_, pos_))
+        {
+            char buff[128];
+            SPRINTF_F(buff, sizeof(buff), "`%s` arg1 connot be null",
+                lua_type_info_t<T>::get_name());
+            luaL_argerror(ls_, pos_, buff);
+        }
+
+        luaL_getmetatable(ls_, lua_type_info_t<T>::get_name());
+        if (0 == lua_rawequal(ls_, -1, -2))
+        {
+            lua_getfield(ls_, -2, INHERIT_TABLE);
+            if (0 == lua_rawequal(ls_, -1, -2))
+            {
+                lua_pop(ls_, 3);
+                char buff[128];
+                SPRINTF_F(buff, sizeof(buff), "`%s` arg1 type not equal",
+                    lua_type_info_t<T>::get_name());
+                luaL_argerror(ls_, pos_, buff);
+            }
+            lua_pop(ls_, 3);
+        }
+        else
+        {
+            lua_pop(ls_, 2);
+        }
+
+        T* ret_ptr = ((userdata_for_object_t<T>*)arg_data)->obj;
+        if (NULL == ret_ptr)
+        {
+            char buff[128];
+            SPRINTF_F(buff, sizeof(buff), "`%s` object ptr can't be null",
+                lua_type_info_t<T>::get_name());
+            luaL_argerror(ls_, pos_, buff);
+        }
+
+        param_ = *ret_ptr;
         return 0;
-    }*/
+    }
 };
 
 
@@ -995,7 +1059,8 @@ struct lua_op_t<T*>
     {
         if (false == lua_type_info_t<T>::is_registed())
         {
-            luaL_argerror(ls_, pos_, "type not supported");
+            string strErr = string("type not supported2:") + __FUNCTION__;
+            luaL_argerror(ls_, pos_, strErr.c_str());
         }
 
         void *arg_data = lua_touserdata(ls_, pos_);
@@ -1041,7 +1106,8 @@ struct lua_op_t<T*>
     {
         if (false == lua_type_info_t<T>::is_registed())
         {
-            luaL_argerror(ls_, pos_, "type not supported");
+            string strErr = string("type not supported3:") + __FUNCTION__;
+            luaL_argerror(ls_, pos_, strErr.c_str());
         }
         void *arg_data = lua_touserdata(ls_, pos_);
 
@@ -1161,6 +1227,64 @@ struct lua_op_t<vector<T> >
 		return 0;
     }
 };
+
+template<typename T>
+struct lua_op_t<deque<T> >
+{
+	static void push_stack(lua_State* ls_, const deque<T>& arg_)
+	{
+		lua_newtable(ls_);
+		typename deque<T>::const_iterator it = arg_.begin();
+		for (int i = 1; it != arg_.end(); ++it, ++i)
+		{
+			lua_op_t<int>::push_stack(ls_, i);
+			lua_op_t<T>::push_stack(ls_, *it);
+			lua_settable(ls_, -3);
+		}
+	}
+
+	static int get_ret_value(lua_State* ls_, int pos_, deque<T>& param_)
+	{
+		if (0 == lua_istable(ls_, pos_))
+		{
+			return -1;
+		}
+		lua_pushnil(ls_);
+		int real_pos = pos_;
+		if (pos_ < 0) real_pos = real_pos - 1;
+
+		while (lua_next(ls_, real_pos) != 0)
+		{
+			param_.push_back(T());
+			if (lua_op_t<T>::get_ret_value(ls_, -1, (param_.back())) < 0)
+			{
+				return -1;
+			}
+			lua_pop(ls_, 1);
+		}
+		return 0;
+	}
+
+	static int lua_to_value(lua_State* ls_, int pos_, deque<T>& param_)
+	{
+		luaL_checktype(ls_, pos_, LUA_TTABLE);
+
+		lua_pushnil(ls_);
+		int real_pos = pos_;
+		if (pos_ < 0) real_pos = real_pos - 1;
+		while (lua_next(ls_, real_pos) != 0)
+		{
+			param_.push_back(T());
+			if (lua_op_t<T>::lua_to_value(ls_, -1, (param_.back())) < 0)
+			{
+				luaL_argerror(ls_, pos_ > 0 ? pos_ : -pos_, "convert to vector failed");
+			}
+			lua_pop(ls_, 1);
+		}
+		return 0;
+	}
+};
+
 
 template<typename T>
 struct lua_op_t<list<T> >
